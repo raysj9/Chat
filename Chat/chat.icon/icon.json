@@ -1,0 +1,39 @@
+{
+  "fill" : {
+    "automatic-gradient" : "srgb:0.00000,0.56905,0.57462,1.00000"
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "fill" : "automatic",
+          "glass" : true,
+          "hidden" : false,
+          "image-name" : "bubble.left.and.text.bubble.right 2.png",
+          "name" : "bubble.left.and.text.bubble.right 2",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              0,
+              22.105378228162863
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}

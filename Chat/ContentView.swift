@@ -2,20 +2,26 @@
 //  ContentView.swift
 //  Chat
 //
-//  Created by Samuel Ray on 3/24/26.
-//
 
 import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        #if canImport(FoundationModels)
+        if #available(iOS 26.0, macOS 26.0, *) {
+            FoundationModelChatView()
+        } else {
+            UnsupportedChatView(
+                title: "Foundation Models Requires a Newer OS",
+                message: "Run this app on a device or simulator with Foundation Models support to use on-device chat."
+            )
         }
-        .padding()
+        #else
+        UnsupportedChatView(
+            title: "Foundation Models Unavailable",
+            message: "This Xcode toolchain does not include the Foundation Models framework."
+        )
+        #endif
     }
 }
 
