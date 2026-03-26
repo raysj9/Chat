@@ -6,9 +6,12 @@
 import SwiftUI
 #if canImport(FoundationModels)
 
-@available(iOS 26.0, macOS 26.0, *)
 struct MessageBubble: View {
     let message: ChatMessage
+
+    private var isShowingTypingIndicator: Bool {
+        message.role == .assistant && message.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
     var body: some View {
         HStack {
@@ -29,10 +32,15 @@ struct MessageBubble: View {
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(message.role.tint)
 
-            Text(message.text)
-                .font(.body)
-                .textSelection(.enabled)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            if isShowingTypingIndicator {
+                TypingIndicatorView()
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                Text(message.text)
+                    .font(.body)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 14)

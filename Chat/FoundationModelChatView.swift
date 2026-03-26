@@ -6,9 +6,10 @@
 import SwiftUI
 #if canImport(FoundationModels)
 import FoundationModels
+import SwiftData
 
-@available(iOS 26.0, macOS 26.0, *)
 struct FoundationModelChatView: View {
+    @Environment(\.modelContext) private var modelContext
     @State private var viewModel = ChatViewModel()
     @State private var draft = ""
     @State private var isShowingRenamePrompt = false
@@ -20,12 +21,24 @@ struct FoundationModelChatView: View {
 
         NavigationSplitView {
             List(selection: $viewModel.selectedChatID) {
-                ForEach(viewModel.chats) { chat in
+                ForEach(viewModel.filteredChats) { chat in
                     ChatListRow(chat: chat)
                         .tag(chat.id)
+                        .swipeActions(edge: .leading, allowsFullSwipe: false) {
+                            Button {
+                                viewModel.togglePin(for: chat.id)
+                            } label: {
+                                Label(
+                                    chat.isPinned ? "Unpin" : "Pin",
+                                    systemImage: chat.isPinned ? "pin.slash" : "pin"
+                                )
+                            }
+                            .tint(chat.isPinned ? .gray : .yellow)
+                        }
                 }
-                .onDelete(perform: viewModel.deleteChats)
+                .onDelete(perform: deleteFilteredChats)
             }
+            .searchable(text: $viewModel.searchText, prompt: "Search chats")
             .navigationTitle("Chats")
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -63,6 +76,18 @@ struct FoundationModelChatView: View {
                         isShowingRenamePrompt = true
                     } label: {
                         Label("Rename Chat", systemImage: "pencil")
+                    }
+                    .disabled(viewModel.selectedChat == nil)
+                }
+
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        viewModel.togglePinForSelectedChat()
+                    } label: {
+                        Label(
+                            viewModel.selectedChat?.isPinned == true ? "Unpin Chat" : "Pin Chat",
+                            systemImage: viewModel.selectedChat?.isPinned == true ? "pin.slash" : "pin"
+                        )
                     }
                     .disabled(viewModel.selectedChat == nil)
                 }
@@ -123,6 +148,9 @@ struct FoundationModelChatView: View {
                 Text("This cannot be undone.")
             }
         }
+        .task {
+            await viewModel.configureIfNeeded(modelContext: modelContext)
+        }
     }
 
     private func submitDraft() {
@@ -136,6 +164,16 @@ struct FoundationModelChatView: View {
         }
     }
 
+    private func deleteFilteredChats(at offsets: IndexSet) {
+        let ids = offsets.map { viewModel.filteredChats[$0].id }
+        let allOffsets = IndexSet(
+            ids.compactMap { id in
+                viewModel.chats.firstIndex(where: { $0.id == id })
+            }
+        )
+        viewModel.deleteChats(atOffsets: allOffsets)
+    }
+
     @ViewBuilder
     private var chatActionsMenu: some View {
         if viewModel.selectedChat != nil {
@@ -145,6 +183,15 @@ struct FoundationModelChatView: View {
                     isShowingRenamePrompt = true
                 } label: {
                     Label("Rename Chat", systemImage: "pencil")
+                }
+
+                Button {
+                    viewModel.togglePinForSelectedChat()
+                } label: {
+                    Label(
+                        viewModel.selectedChat?.isPinned == true ? "Unpin Chat" : "Pin Chat",
+                        systemImage: viewModel.selectedChat?.isPinned == true ? "pin.slash" : "pin"
+                    )
                 }
 
                 Button(role: .destructive) {

@@ -6,7 +6,6 @@
 import SwiftUI
 #if canImport(FoundationModels)
 
-@available(iOS 26.0, macOS 26.0, *)
 struct ChatBackgroundView: View {
     @Environment(\.colorScheme) private var colorScheme
 

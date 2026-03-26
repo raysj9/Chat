@@ -4,18 +4,14 @@
 //
 
 import SwiftUI
+#if canImport(FoundationModels)
+import SwiftData
+#endif
 
 struct ContentView: View {
     var body: some View {
         #if canImport(FoundationModels)
-        if #available(iOS 26.0, macOS 26.0, *) {
-            FoundationModelChatView()
-        } else {
-            UnsupportedChatView(
-                title: "Foundation Models Requires a Newer OS",
-                message: "Run this app on a device or simulator with Foundation Models support to use on-device chat."
-            )
-        }
+        FoundationModelChatView()
         #else
         UnsupportedChatView(
             title: "Foundation Models Unavailable",
@@ -27,4 +23,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: [ChatThread.self, ChatMessage.self], inMemory: true)
 }

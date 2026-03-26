@@ -6,15 +6,22 @@
 import SwiftUI
 #if canImport(FoundationModels)
 
-@available(iOS 26.0, macOS 26.0, *)
 struct ChatListRow: View {
     let chat: ChatThread
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(chat.title)
-                .font(.headline)
-                .lineLimit(1)
+            HStack(spacing: 6) {
+                Text(chat.title)
+                    .font(.headline)
+                    .lineLimit(1)
+
+                if chat.isPinned {
+                    Image(systemName: "pin.fill")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
 
             Text(chat.preview)
                 .font(.subheadline)

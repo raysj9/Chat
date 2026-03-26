@@ -4,15 +4,12 @@
 //
 
 import Foundation
+import SwiftData
 import SwiftUI
 #if canImport(FoundationModels)
 
-@available(iOS 26.0, macOS 26.0, *)
-struct ChatMessage: Identifiable, Equatable, Codable {
-    var id = UUID()
-    let role: Role
-    var text: String
-
+@Model
+final class ChatMessage {
     enum Role: String, Equatable, Codable {
         case user
         case assistant
@@ -43,6 +40,23 @@ struct ChatMessage: Identifiable, Equatable, Codable {
                 return .regular.tint(.white.opacity(0.16))
             }
         }
+    }
+
+    @Attribute(.unique) var id: UUID
+    var role: Role
+    var text: String
+    var createdAt: Date
+
+    init(
+        id: UUID = UUID(),
+        role: Role,
+        text: String,
+        createdAt: Date = .now
+    ) {
+        self.id = id
+        self.role = role
+        self.text = text
+        self.createdAt = createdAt
     }
 }
 #endif
