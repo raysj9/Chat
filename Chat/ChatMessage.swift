@@ -42,10 +42,11 @@ final class ChatMessage {
         }
     }
 
-    @Attribute(.unique) var id: UUID
-    var role: Role
-    var text: String
-    var createdAt: Date
+    var id: UUID = Foundation.UUID()
+    var role: Role = ChatMessage.Role.assistant
+    var text: String = ""
+    var createdAt: Date = Foundation.Date()
+    var thread: ChatThread?
 
     init(
         id: UUID = UUID(),
@@ -57,6 +58,7 @@ final class ChatMessage {
         self.role = role
         self.text = text
         self.createdAt = createdAt
+        self.thread = nil
     }
 }
 #endif

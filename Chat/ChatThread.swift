@@ -15,12 +15,12 @@ final class ChatThread {
         case manual
     }
 
-    @Attribute(.unique) var id: UUID
-    var title: String
-    var titleSource: TitleSource
-    var isPinned: Bool
-    @Relationship(deleteRule: .cascade) var messages: [ChatMessage]
-    var updatedAt: Date
+    var id: UUID = Foundation.UUID()
+    var title: String = "New Chat"
+    var titleSource: TitleSource = ChatThread.TitleSource.placeholder
+    var isPinned: Bool = false
+    @Relationship(deleteRule: .cascade, inverse: \ChatMessage.thread) var messages: [ChatMessage]?
+    var updatedAt: Date = Foundation.Date()
 
     init(
         id: UUID = UUID(),
@@ -39,10 +39,14 @@ final class ChatThread {
 
         let seededMessages = messages ?? [ChatMessage(role: .assistant, text: "Hi. Send a message to get started.")]
         self.messages = seededMessages
+
+        for message in seededMessages {
+            message.thread = self
+        }
     }
 
     var sortedMessages: [ChatMessage] {
-        Array(messages).sorted(by: { lhs, rhs in
+        Array(messages ?? []).sorted(by: { lhs, rhs in
             lhs.createdAt < rhs.createdAt
         })
     }

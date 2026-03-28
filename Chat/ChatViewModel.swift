@@ -268,23 +268,27 @@ final class ChatViewModel {
     private func appendMessage(_ message: ChatMessage, to chatID: UUID) {
         guard let index = chats.firstIndex(where: { $0.id == chatID }) else { return }
         modelContext?.insert(message)
-        chats[index].messages.append(message)
+        if chats[index].messages == nil {
+            chats[index].messages = []
+        }
+        chats[index].messages?.append(message)
+        message.thread = chats[index]
         chats[index].updatedAt = .now
     }
 
     private func updateMessage(chatID: UUID, id: UUID, text: String) {
         guard let chatIndex = chats.firstIndex(where: { $0.id == chatID }) else { return }
-        guard let messageIndex = chats[chatIndex].messages.firstIndex(where: { $0.id == id }) else { return }
-        chats[chatIndex].messages[messageIndex].text = text
+        guard let messageIndex = chats[chatIndex].messages?.firstIndex(where: { $0.id == id }) else { return }
+        chats[chatIndex].messages?[messageIndex].text = text
         chats[chatIndex].updatedAt = .now
     }
 
     private func removeMessage(chatID: UUID, id: UUID) {
         guard let modelContext else { return }
         guard let index = chats.firstIndex(where: { $0.id == chatID }) else { return }
-        guard let messageIndex = chats[index].messages.firstIndex(where: { $0.id == id }) else { return }
+        guard let messageIndex = chats[index].messages?.firstIndex(where: { $0.id == id }) else { return }
 
-        let message = chats[index].messages.remove(at: messageIndex)
+        guard let message = chats[index].messages?.remove(at: messageIndex) else { return }
         modelContext.delete(message)
         chats[index].updatedAt = .now
     }
