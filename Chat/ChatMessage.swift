@@ -26,18 +26,18 @@ final class ChatMessage {
         var tint: Color {
             switch self {
             case .user:
-                return .blue
+                return .white
             case .assistant:
                 return .primary
             }
         }
 
-        var glass: Glass {
+        var bubbleBackground: Color {
             switch self {
             case .user:
-                return .regular.tint(.blue.opacity(0.28))
+                return .blue
             case .assistant:
-                return .regular.tint(.white.opacity(0.16))
+                return Color(.secondarySystemFill)
             }
         }
     }

@@ -42,10 +42,11 @@ struct MessageBubble: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
+        .foregroundStyle(message.role == .user ? .white : .primary)
         .padding(.horizontal, 16)
         .padding(.vertical, 14)
-        .glassEffect(
-            message.role.glass,
+        .background(
+            message.role.bubbleBackground,
             in: RoundedRectangle(cornerRadius: 26, style: .continuous)
         )
     }

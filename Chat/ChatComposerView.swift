@@ -27,7 +27,7 @@ struct ChatComposerView: View {
                 }
 
                 HStack(alignment: .bottom, spacing: 12) {
-                    TextField("Type here", text: $draft)
+                    TextField("Type here", text: $draft, axis: .vertical)
                         .textFieldStyle(.plain)
                         .focused($isComposerFocused)
                         .disabled(!canPromptModel)
